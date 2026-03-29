@@ -88,41 +88,45 @@ with tab1:
         st.markdown('</div>', unsafe_allow_html=True)
     
     # Predict Button
-    if st.button("🚀 Predict Processing Time", key="single_predict"):
-        # Create features
-        features = np.array([[0, 0, 0, age/10, income/10000, 0]])
-        days = model.predict(features)[0]
-        
-        status = "✅ Fast Track" if days < 30 else "⏳ Standard" if days < 60 else "⚠️ May Delay"
-        color = "success-card" if days < 30 else "warning-card" if days < 60 else "metric-card"
-        
-        # Results
-        st.balloons()
-        
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            st.markdown(f"""
-            <div class="{color}">
-                <h2 style="text-align: center; margin: 0; font-size: 4rem;">{days}</h2>
-                <p style="text-align: center; font-size: 1.5rem; margin: 0.5rem 0;">Days</p>
-                <p style="text-align: center; font-size: 1.3rem; font-weight: 600;">{status}</p>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        # Timeline
+if st.button("🚀 Predict Processing Time", key="single_predict"):
+    # Create features
+    features = np.array([[0, 0, 0, age/10, income/10000, 0]])
+    days = model.predict(features)[0]
+    
+    status = "✅ Fast Track" if days < 30 else "⏳ Standard" if days < 60 else "⚠️ May Delay"
+    color = "success-card" if days < 30 else "warning-card" if days < 60 else "metric-card"
+    
+    # Results
+    st.balloons()
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown(f"""
+        <div class="{color}">
+            <h2 style="text-align: center; margin: 0; font-size: 4rem;">{days}</h2>
+            <p style="text-align: center; font-size: 1.5rem; margin: 0.5rem 0;">Days</p>
+            <p style="text-align: center; font-size: 1.3rem; font-weight: 600;">{status}</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # FIXED Timeline
+    try:
         expected_date = app_date + timedelta(days=days)
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric("Submission", app_date)
-            st.metric("Expected Decision", expected_date)
-        with col2:
-            st.metric("Processing Days", f"{days} days")
-            st.metric("Status", status)
-        
-        # Progress Bar
-        progress = min(days/90, 1.0)
-        st.progress(progress)
-        st.success(f"🎯 Expected approval by **{expected_date.strftime('%B %d, %Y')}**")
+    except:
+        expected_date = datetime.now().date() + timedelta(days=days)
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("Submission", app_date)
+        st.metric("Expected Decision", expected_date)
+    with col2:
+        st.metric("Processing Days", f"{days} days")
+        st.metric("Status", status)
+    
+    # Progress Bar
+    progress = min(days/90, 1.0)
+    st.progress(progress)
+    st.success(f"🎯 Expected approval by **{expected_date.strftime('%B %d, %Y')}**")
 
 with tab2:
     st.markdown("---")
